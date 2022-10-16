@@ -1,0 +1,62 @@
+// アイテム購入ボタン
+@mixin itemBuyButton() {
+  display: block;
+  color: #fff;
+  background-color: #28f;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 10px;
+  cursor: pointer;
+}
+
+// 各共通のモーダル
+@mixin eachConfiramationModal() {
+  width: 300px;
+  height: 300px;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  border-radius: 10px;
+  background-color: #fff;
+  color: #333;
+  transition: 0.3s;
+  visibility: hidden;
+  opacity: 0;
+}
+
+// 各共通の確認ボタン
+@mixin eachConfiramationButton() {
+  display: block;
+  border: 1px solid #333;
+  border-radius: 5px;
+  padding: 10px;
+  color: #fff;
+  background-color: #6bf;
+}
+
+// ショップを出るボタン
+@mixin shopInOutButton() {
+  margin: 50px auto 0;
+  width: 200px;
+  height: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 0;
+  outline: none;
+  font-size: 20px;
+  border-radius: 5px;
+}
+
+
+// マスク
+@mixin blackTranslucentMask() {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+}

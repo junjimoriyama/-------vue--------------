@@ -5,19 +5,182 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>slide show</title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/destyle.css@1.0.15/destyle.css"/>
+  <title>ゲーム制作</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/destyle.css@1.0.15/destyle.css" />
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <script src="script.js" defer></script>
 </head>
 
 <body>
-    <main>
-      <div class="container">
-        <div class="sec"></div>
+  <main>
+    <!-- セッティング -->
+    <div id="settingButton" class="settingButton">
+      <i class="fa fa-cog"></i>
+    </div>
+
+    <div id="settingWindow" class="settingWindow">
+      <div id="playerCurrentName" class="playerCurrentName">
       </div>
-    </main>
+
+      <!-- 名前の入力 -->
+      <p>変更する名前を入力してください。</p>
+      <input id="playerNameInput" class="playerNameInput" type="text" name="playerNameInput">
+      <button id="playerNameDecisionButton" class="playerNameDecisionButton">決定</button>
+
+      <div id="playerNameWindowMask" class="playerNameWindowMask"></div>
+      <div id="playerNameModal" class="playerNameModal">
+        <p>名前を変更しました。</p>
+        <button id="playerNameConfiramationButton" class="playerNameConfiramationButton">確認した</button>
+      </div>
+    </div>
+
+    <!------------------------- 戦闘画面 ------------------------->
+    <!-- 敵の表示 -->
+    <section id="enemy" class="enemy">
+      <h2 id="enemyName"></h2>
+
+      <img id="enemyImg" class="enemyImg">
+
+      <div class="hpGauge">
+        <div class="hpGaugeValue" id="currentEnemyHpGaugeValue"></div>
+      </div>
+      <div class="hp">
+        <div id="currentEnemyHp"></div>
+        <div id="maxEnemyHp"></div>
+      </div>
+    </section>
+
+    <!-- プレイヤーの表示 -->
+    <section class="player">
+      <!-- 名前 -->
+      <h2 id="playerName"></h2>
+      <!-- 画像 -->
+      <img id="playerImg" class="playerImg">
+      <!-- 経験値 -->
+      <div id='exp' class='exp'></div>
+      <!-- レベル -->
+      <div id="level" class='level'></div>
+
+      <div id="playerAttack" class="playerAttack"></div>
+      <div id="playerDefence" class="playerDefence"></div>
+
+
+      <!-- アイテム -->
+      <div id="haveItem" class="haveItem">- アイテム -
+        <ul id="haveItemList"></ul>
+          <button id="useItem" class="useItem">アイテムを使う</button>
+      </div>
+
+      <!-- コイン -->
+      <div id="coin" class="coin">コイン</div>
+
+      <!-- HPゲージ -->
+      <div class="hpGauge">
+        <div class="hpGaugeValue" id="currentPlayerHpGaugeValue"></div>
+      </div>
+
+      <div class="hp">
+        <div id="currentplayerHp"></div>
+        <div id="maxplayerHp"></div>
+      </div>
+
+      <!-- 討伐数 -->
+      <div class="playerStatus">
+        <div class="KilledNumbers">
+          討伐数 : <div id="nowKilledNumber"></div>
+          <div id="targetKilledNumber"></div>
+        </div>
+      </div>
+
+      <!-- 攻撃のログ -->
+      <ul id="logs" class="logs"></ul>
+      <button id="attack" class="attack">攻撃する</button>
+
+      <button id="shopIn" class="shopIn">ショップに入る</button>
+    </section>
+  </main>
+
+  <div id="mask" class="mask"></div>
+  <div id="modal" class="modal">
+    <h2 id="modalTitle" class="modalTitle"></h2>
+    <a id="modalNextButton" class="modalNextButton">次へすすむ</a>
+  </div>
+
+
+  <!------------------------- アイテムショップ画面 ------------------------->
+  <div id="itemWindow" class="itemWindow">
+
+    <div id="playerCoinDisplay" class="playerCoinDisplay"></div>
+
+    <table id="shopItemTable" class="itemType">
+      <tr id="shopItemImage">
+        <!-- <th><img id='itemImgA' class='itemImgA'></th>
+        <th><img id='itemImgB' class='itemImgB'></th> -->
+      </tr>
+      <tr id="shopItemName">
+        <!-- <td id="itemNameA" class="itemNameA"></td>
+        <td id="itemNameB" class="itemNameB"></td> -->
+      </tr>
+      <tr id="shopItemPrice">
+        <!-- <td id="itemUnitPriceA" class="itemUnitPriceA"></td>
+        <td id="itemUnitPriceB" class="itemUnitPriceB"></td> -->
+      </tr>
+      <tr id="shopItemNumber">
+        <!-- <td>
+          <label for="numberOfItemA">
+            購入数 :
+            <select id="numberOfItemA" class="numberOfItem"  name="numberOfItem">
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+              <option value="5">5</option>
+            </select>
+          </label>
+        </td>
+
+        <td>
+          <label>
+            購入数 :
+            <select id="numberOfItemB" class="numberOfItem"  name="numberOfItem">
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+              <option value="5">5</option>
+            </select>
+          </label>
+        </td> -->
+
+      <tr id="shopItemTotalBuyCoin">
+        <!-- <td id="totalBuyCoinA" class="totalBuyCoinA">合計コイン : 10 </td>
+        <td id="totalBuyCoinB" class="totalBuyCoinB">合計コイン : 20</td> -->
+      </tr>
+
+      <tr id="shopItemBuy">
+        <!-- <td id='itemBuyA' class='itemBuy'><span>購入</span></td> -->
+        <!-- <td id='itemBuyB' class='itemBuy'><span>購入</span></td> -->
+      </tr>
+    </table>
+
+    <div id="itemBuyWindowMask" class="itemBuyWindowMask"></div>
+    <div id="itemBuyModal" class="itemBuyModal">
+      <p>アイテムを購入した</p>
+      <div id="coinBalance" class="coinBalance"></div>
+      <button class="itemBuyConfiramationButton">確認した</button>
+    </div>
+
+    <div id="itemNotBuyModal" class="itemNotBuyModal">
+      <p>お金が足りず<br>アイテムを購入できませんでした。</p>
+      <button class="itemBuyConfiramationButton">確認した</button>
+    </div>
+
+
+    <div id='shopOut' class='shopOut'>ショップを出る</div>
+
+
+  </div>
 </body>
 
 </html>

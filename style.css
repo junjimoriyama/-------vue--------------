@@ -1,18 +1,554 @@
-@charset "utf-8";
-
-*, *::before, *::after {
+@charset "UTF-8";
+* {
+  box-sizing: border-box;
+}
+*::before, *::after {
   box-sizing: border-box;
 }
 
-.container {
-
-  width: calc(100% - 20px);
-  height: 70px;
-  background-color: #333;
+a {
+  color: #333;
+  text-decoration: none;
 }
 
-.sec {
-  width:100%;
-  height: 30px;
-  background-color: aquamarine;
+main {
+  margin: 50px auto;
+  padding: 20px;
+  background-color: #ddd;
+  border-radius: 5px;
+  max-width: 1000px;
+  width: 100%;
+  position: relative;
 }
+
+.settingButton {
+  font-size: 40px;
+  position: absolute;
+  bottom: -100px;
+  z-index: 30;
+  cursor: pointer;
+}
+
+.settingWindow {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #ccc;
+  transition: 0.3;
+  opacity: 0;
+  visibility: hidden;
+}
+.settingWindow.active {
+  opacity: 1;
+  visibility: visible;
+  z-index: 20;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+.settingWindow.active .playerCurrentName {
+  font-size: 40px;
+  margin-bottom: 50px;
+}
+.settingWindow.active p {
+  font-size: 20px;
+  margin-bottom: 10px;
+}
+.settingWindow.active .playerNameInput {
+  width: 300px;
+  height: 50px;
+  font-size: 30px;
+  background-color: #fff;
+  border: 1px solid #000;
+  margin-bottom: 30px;
+  border-radius: 3px;
+}
+.settingWindow.active .playerNameInput:hover {
+  border: 1px solid #28f;
+}
+.settingWindow.active .playerNameDecisionButton {
+  border: 1px solid #000;
+  padding: 10px;
+  background-color: #28f;
+  color: #fff;
+  border-radius: 3px;
+  opacity: 0.5;
+}
+.settingWindow.active .playerNameDecisionButton:hover {
+  opacity: 0.3;
+}
+.settingWindow.active .playerNameWindowMask {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  transition: 0.3;
+  opacity: 0;
+  visibility: hidden;
+}
+.settingWindow.active .playerNameWindowMask.show {
+  opacity: 1;
+  visibility: visible;
+  z-index: 10;
+}
+.settingWindow.active .playerNameModal {
+  width: 300px;
+  height: 300px;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  border-radius: 10px;
+  background-color: #fff;
+  color: #333;
+  transition: 0.3s;
+  visibility: hidden;
+  opacity: 0;
+  z-index: 20;
+  top: 0%;
+  transform: translateY(-50%);
+  left: 0%;
+}
+.settingWindow.active .playerNameModal.show {
+  opacity: 1;
+  visibility: visible;
+  z-index: 10;
+}
+.settingWindow.active .playerNameModal.show p {
+  display: block;
+  font-size: 16px;
+  color: #333;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 30px;
+  text-align: center;
+}
+.settingWindow.active .playerNameModal.show .playerNameConfiramationButton {
+  display: block;
+  border: 1px solid #333;
+  border-radius: 5px;
+  padding: 10px;
+  color: #fff;
+  background-color: #6bf;
+}
+
+section {
+  background-color: #fff;
+  padding: 20px;
+}
+section h2 {
+  font-weight: bold;
+  font-size: 20px;
+  text-align: center;
+}
+
+.enemy {
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+/* モンスターの画像 */
+#enemyImg {
+  width: 100px;
+  height: 100px;
+  background-size: cover;
+}
+
+#playerImg {
+  width: 100px;
+  height: 100px;
+  background-size: cover;
+  position: relative;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+/* アイテム */
+.haveItem {
+  margin-top: 10px;
+}
+.haveItem .useItem {
+  border: 1px solid #333;
+  background-color: #28f;
+  color: #fff;
+  border-radius: 5px;
+  padding: 5px;
+  margin: 5px;
+  transition: 0.5s;
+}
+.haveItem .useItem:hover {
+  transform: scale(1.1);
+}
+
+/* コイン */
+.coin {
+  text-align: right;
+  font-size: 20px;
+}
+
+.hpGauge {
+  border: 1px solid #777;
+  margin-top: 10px;
+}
+
+.hpGaugeValue {
+  height: 15px;
+  background-color: #6bf;
+  transition: 0.3s;
+  width: 100%;
+}
+
+.hp {
+  display: flex;
+  justify-content: center;
+  margin-top: 10px;
+}
+.hp > div:first-of-type::after {
+  content: "/ ";
+  margin: 0 5px;
+}
+
+.KilledNumbers {
+  display: flex;
+  justify-content: flex-end;
+}
+.KilledNumbers > div:first-of-type::after {
+  content: "/";
+  margin: 0 5px;
+}
+
+#nowKilledNumber {
+  margin-left: 5px;
+}
+
+.logs {
+  border: 1px solid #777;
+  border-radius: 5px;
+  padding: 10px 15px;
+  font-size: 16px;
+  line-height: 1.8;
+  height: 250px;
+  overflow: auto;
+  margin-top: 30px;
+  box-shadow: 0 0 3px 0 #777 inset;
+}
+
+.attack {
+  margin: 50px auto 0;
+  width: 200px;
+  height: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #f44;
+  color: #fff;
+  border: 0;
+  outline: none;
+  font-size: 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+.attack:hover {
+  transform: scale(1.2);
+}
+
+.shopIn {
+  margin: 50px auto 0;
+  width: 200px;
+  height: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 0;
+  outline: none;
+  font-size: 20px;
+  border-radius: 5px;
+  background-color: #ccc;
+  color: #fff;
+  pointer-events: none;
+  visibility: visible;
+  opacity: 0.3;
+  transition: 0.5s;
+}
+.shopIn.active {
+  background-color: darkseagreen;
+  cursor: pointer;
+  visibility: visible;
+  opacity: 1;
+  transform: scale(1.2);
+  pointer-events: auto;
+  position: relative;
+  z-index: 2;
+}
+
+.attack.deActive {
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+.mask {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  transition: 0.3;
+  opacity: 0;
+  visibility: hidden;
+}
+.mask.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 30px;
+  background-color: #fff;
+  border-radius: 10px;
+  min-width: 500px;
+  transition: 0.3;
+  opacity: 0;
+  visibility: hidden;
+}
+.modal.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.modalTitle {
+  font-weight: bold;
+  font-size: 40px;
+  text-align: center;
+}
+
+.modalNextButton {
+  margin: 50px auto 0;
+  width: 200px;
+  height: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #28f;
+  color: #fff;
+  font-size: 20px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+.modalNextButton.hidden {
+  display: none;
+}
+
+.itemWindow {
+  width: 100%;
+  height: 100vh;
+  background-color: #fff;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  transition: 1s;
+  opacity: 0;
+  visibility: hidden;
+}
+.itemWindow.show {
+  opacity: 1;
+  visibility: visible;
+  z-index: 3;
+}
+.itemWindow .playerCoinDisplay {
+  position: absolute;
+  top: 10%;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 30px;
+}
+.itemWindow .itemType {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  transition: 2s;
+  opacity: 0;
+  visibility: hidden;
+  text-align: center;
+}
+.itemWindow .itemType.show {
+  opacity: 1;
+  visibility: visible;
+  z-index: 3;
+}
+.itemWindow .itemType.show .numberOfItem {
+  cursor: pointer;
+}
+.itemWindow th {
+  width: 300px;
+  height: 300px;
+  border: 1px solid #333;
+}
+.itemWindow tr,
+.itemWindow td {
+  border: 1px solid #333;
+  padding: 10px;
+}
+.itemWindow .itemBuy span {
+  display: block;
+  color: #fff;
+  background-color: #28f;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 10px;
+  cursor: pointer;
+  opacity: 0.3;
+  pointer-events: none;
+}
+.itemWindow .itemBuy span.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+.itemWindow .itemBuy span:hover {
+  opacity: 0.7;
+}
+.itemWindow .itemBuyWindowMask {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  transition: 0.3;
+  opacity: 0;
+  visibility: hidden;
+}
+.itemWindow .itemBuyWindowMask.show {
+  opacity: 1;
+  visibility: visible;
+  z-index: 10;
+}
+.itemWindow .itemBuyModal {
+  width: 300px;
+  height: 300px;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  border-radius: 10px;
+  background-color: #fff;
+  color: #333;
+  transition: 0.3s;
+  visibility: hidden;
+  opacity: 0;
+  z-index: 20;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50% -50%);
+}
+.itemWindow .itemBuyModal.show {
+  visibility: visible;
+  opacity: 1;
+}
+.itemWindow .itemBuyModal.show p {
+  display: block;
+  font-size: 20px;
+  color: #333;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 30px;
+}
+.itemWindow .itemBuyModal.show .coinBalance {
+  font-size: 20px;
+  color: chocolate;
+  margin-bottom: 20px;
+}
+.itemWindow .itemBuyModal.show .itemBuyConfiramationButton {
+  display: block;
+  border: 1px solid #333;
+  border-radius: 5px;
+  padding: 10px;
+  color: #fff;
+  background-color: #6bf;
+}
+.itemWindow .itemNotBuyModal {
+  width: 300px;
+  height: 300px;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  border-radius: 10px;
+  background-color: #fff;
+  color: #333;
+  transition: 0.3s;
+  visibility: hidden;
+  opacity: 0;
+  border: 1px solid #333;
+  z-index: -20;
+  top: 30%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+.itemWindow .itemNotBuyModal.show {
+  opacity: 1;
+  visibility: visible;
+  z-index: 10;
+}
+.itemWindow .itemNotBuyModal.show p {
+  display: block;
+  font-size: 16px;
+  color: #333;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 30px;
+  text-align: center;
+}
+.itemWindow .itemNotBuyModal.show .itemBuyConfiramationButton {
+  display: block;
+  border: 1px solid #333;
+  border-radius: 5px;
+  padding: 10px;
+  color: #fff;
+  background-color: #6bf;
+}
+.itemWindow .shopOut {
+  margin: 50px auto 0;
+  width: 200px;
+  height: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 0;
+  outline: none;
+  font-size: 20px;
+  border-radius: 5px;
+  position: fixed;
+  bottom: 20%;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: darkseagreen;
+  color: #fff;
+  border: 1px solid #ccc;
+  cursor: pointer;
+  transition: 0.5s;
+}
+.itemWindow .shopOut:hover {
+  transform: translateX(-50%) scale(1.2);
+}
+
+/* left: 50%;
+  transform: translate(-50%, -50%); *//*# sourceMappingURL=style.css.map */

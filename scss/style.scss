@@ -1,0 +1,532 @@
+@charset "utf-8";
+
+@use "var" as var;
+@use "mixin" as mixin;
+
+// z-index一覧
+// セッティング画面:20
+// セッティングボタン:30
+// ショップ入るボタン:2
+// ショップ画面:3
+// アイテムの表示:3
+// アイテムを買った時の表示画面:10
+* {
+  box-sizing: border-box;
+
+  &::before,
+  &::after {
+    box-sizing: border-box;
+  }
+}
+
+a {
+  color: #333;
+  text-decoration: none;
+}
+
+main {
+  margin: 50px auto;
+  padding: 20px;
+  background-color: #ddd;
+  border-radius: 5px;
+  max-width: 1000px;
+  width: 100%;
+  position: relative;
+}
+
+// セッティング画面について ======================================================
+
+.settingButton {
+  font-size: 40px;
+  position: absolute;
+  bottom: -100px;
+  z-index: 30;
+  cursor: pointer;
+}
+
+.settingWindow {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #ccc;
+  transition: 0.3;
+  opacity: 0;
+  visibility: hidden;
+
+  &.active {
+    opacity: 1;
+    visibility: visible;
+    z-index: 20;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+
+    .playerCurrentName {
+      font-size: 40px;
+      margin-bottom: 50px;
+    }
+
+    p {
+      font-size: 20px;
+      margin-bottom: 10px;
+    }
+
+    .playerNameInput {
+      width: 300px;
+      height: 50px;
+      font-size: 30px;
+      background-color: #fff;
+      border: 1px solid #000;
+      margin-bottom: 30px;
+      border-radius: 3px;
+
+      &:hover {
+        border: 1px solid #28f;
+      }
+    }
+
+    .playerNameDecisionButton {
+      border: 1px solid #000;
+      padding: 10px;
+      background-color: #28f;
+      color: #fff;
+      border-radius: 3px;
+      opacity: .5;
+
+      &:hover {
+        opacity: .3;
+      }
+    }
+
+    .playerNameWindowMask {
+      @include mixin.blackTranslucentMask();
+      transition: 0.3;
+      opacity: 0;
+      visibility: hidden;
+
+      &.show {
+        opacity: 1;
+        visibility: visible;
+        z-index: 10;
+      }
+    }
+
+    .playerNameModal {
+      @include mixin.eachConfiramationModal();
+      z-index: 20;
+      top: 0%;
+      transform: translateY(-50%);
+      left: 0%;
+
+      &.show {
+        opacity: 1;
+        visibility: visible;
+        z-index: 10;
+
+        p {
+          display: block;
+          font-size: 16px;
+          color: #333;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          margin-bottom: 30px;
+          text-align: center;
+        }
+
+        .playerNameConfiramationButton {
+          @include mixin.eachConfiramationButton();
+        }
+      }
+    }
+  }
+}
+
+section {
+  background-color: #fff;
+  padding: 20px;
+
+  h2 {
+    font-weight: bold;
+    font-size: 20px;
+    text-align: center;
+  }
+}
+
+.enemy {
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+/* モンスターの画像 */
+
+#enemyImg {
+  width: 100px;
+  height: 100px;
+  background-size: cover;
+}
+
+.player {
+}
+
+#playerImg {
+  width: 100px;
+  height: 100px;
+  background-size: cover;
+  position: relative;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+/* アイテム */
+.haveItem {
+  margin-top: 10px;
+  .haveItemA {
+    .haveItemANumber {
+    }
+  }
+  .useItem {
+    border: 1px solid #333;
+    background-color: #28f;
+    color: #fff;
+    border-radius: 5px;
+    padding: 5px;
+    margin: 5px;
+    transition: .5s;
+
+    &:hover {
+      transform: scale(1.1);
+    }
+  }
+}
+
+/* コイン */
+.coin {
+  text-align: right;
+  font-size: 20px;
+}
+
+.hpGauge {
+  border: 1px solid #777;
+  margin-top: 10px;
+}
+
+.hpGaugeValue {
+  height: 15px;
+  background-color: #6bf;
+  transition: 0.3s;
+  width: 100%;
+}
+
+.hp {
+  display: flex;
+  justify-content: center;
+  margin-top: 10px;
+
+  > div:first-of-type::after {
+    content: "/ ";
+    margin: 0 5px;
+  }
+}
+
+.KilledNumbers {
+  display: flex;
+  justify-content: flex-end;
+
+  > div:first-of-type::after {
+    content: "/";
+    margin: 0 5px;
+  }
+}
+
+#nowKilledNumber {
+  margin-left: 5px;
+}
+
+.logs {
+  border: 1px solid #777;
+  border-radius: 5px;
+  padding: 10px 15px;
+  font-size: 16px;
+  line-height: 1.8;
+  height: 250px;
+  overflow: auto;
+  margin-top: 30px;
+  box-shadow: 0 0 3px 0 #777 inset;
+}
+
+.attack {
+  margin: 50px auto 0;
+  width: 200px;
+  height: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #f44;
+  color: #fff;
+  border: 0;
+  outline: none;
+  font-size: 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: 0.3s;
+
+  &:hover {
+    transform: scale(1.2);
+  }
+}
+
+.shopIn {
+  @include mixin.shopInOutButton();
+  background-color: #ccc;
+  color: #fff;
+  pointer-events: none;
+  visibility: visible;
+  opacity: 0.3;
+  transition: 0.5s;
+
+  &.active {
+    background-color: darkseagreen;
+    cursor: pointer;
+    visibility: visible;
+    opacity: 1;
+    transform: scale(1.2);
+    pointer-events: auto;
+    position: relative;
+    z-index: 2;
+  }
+}
+
+.attack.deActive {
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+.mask {
+  @include mixin.blackTranslucentMask();
+  transition: 0.3;
+  opacity: 0;
+  visibility: hidden;
+
+  &.active {
+    opacity: 1;
+    visibility: visible;
+  }
+}
+
+.modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 30px;
+  background-color: #fff;
+  border-radius: 10px;
+  min-width: 500px;
+  transition: 0.3;
+  opacity: 0;
+  visibility: hidden;
+
+  &.active {
+    opacity: 1;
+    visibility: visible;
+  }
+}
+
+.modalTitle {
+  font-weight: bold;
+  font-size: 40px;
+  text-align: center;
+}
+
+.modalNextButton {
+  margin: 50px auto 0;
+  width: 200px;
+  height: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #28f;
+  color: #fff;
+  font-size: 20px;
+  border-radius: 5px;
+  cursor: pointer;
+
+  &.hidden {
+    display: none;
+  }
+}
+
+.itemWindow {
+  width: 100%;
+  height: 100vh;
+  background-color: #fff;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  transition: 1s;
+  opacity: 0;
+  visibility: hidden;
+
+  &.show {
+    opacity: 1;
+    visibility: visible;
+    z-index: 3;
+  }
+
+  .playerCoinDisplay {
+    position: absolute;
+    top: 10%;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 30px;
+  }
+
+  .itemType {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    transition: 2s;
+    opacity: 0;
+    visibility: hidden;
+    text-align: center;
+
+    &.show {
+      opacity: 1;
+      visibility: visible;
+      z-index: 3;
+
+      .numberOfItem {
+        cursor: pointer;
+      }
+    }
+  }
+
+  th {
+    width: 300px;
+    height: 300px;
+    border: 1px solid #333;
+  }
+
+  tr,
+  td {
+    border: 1px solid #333;
+    padding: 10px;
+  }
+
+  .itemBuy span {
+    @include mixin.itemBuyButton();
+    opacity: 0.3;
+    pointer-events: none;
+
+    &.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    &:hover {
+      opacity: 0.7;
+    }
+  }
+
+  .itemBuyWindowMask {
+    @include mixin.blackTranslucentMask();
+    transition: 0.3;
+    opacity: 0;
+    visibility: hidden;
+
+    &.show {
+      opacity: 1;
+      visibility: visible;
+      z-index: 10;
+    }
+  }
+
+  .itemBuyModal {
+    @include mixin.eachConfiramationModal();
+    z-index: 20;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50% -50%);
+
+    &.show {
+      visibility: visible;
+      opacity: 1;
+
+      p {
+        display: block;
+        font-size: 20px;
+        color: #333;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-bottom: 30px;
+      }
+
+      .coinBalance {
+        font-size: 20px;
+        color: chocolate;
+        margin-bottom: 20px;
+      }
+
+      .itemBuyConfiramationButton {
+        @include mixin.eachConfiramationButton();
+      }
+    }
+  }
+
+  .itemNotBuyModal {
+    @include mixin.eachConfiramationModal();
+    border: 1px solid #333;
+    z-index: -20;
+    top: 30%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+    &.show {
+      opacity: 1;
+      visibility: visible;
+      z-index: 10;
+
+      p {
+        display: block;
+        font-size: 16px;
+        color: #333;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-bottom: 30px;
+        text-align: center;
+      }
+
+      .itemBuyConfiramationButton {
+        @include mixin.eachConfiramationButton();
+      }
+    }
+  }
+
+  .shopOut {
+    @include mixin.shopInOutButton();
+    position: fixed;
+    bottom: 20%;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: darkseagreen;
+    color: #fff;
+    border: 1px solid #ccc;
+    cursor: pointer;
+    transition: 0.5s;
+
+    &:hover {
+      transform: translateX(-50%) scale(1.2);
+    }
+  }
+}
+
+/* left: 50%;
+  transform: translate(-50%, -50%); */
