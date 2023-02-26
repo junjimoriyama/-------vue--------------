@@ -6,6 +6,11 @@
   box-sizing: border-box;
 }
 
+body {
+  font-family: "dotgothic16", sans-serif;
+  font-weight: 400;
+}
+
 a {
   color: #333;
   text-decoration: none;
@@ -14,7 +19,7 @@ a {
 main {
   margin: 50px auto;
   padding: 20px;
-  background-color: #ddd;
+  background-color: silver;
   border-radius: 5px;
   max-width: 1000px;
   width: 100%;
@@ -26,7 +31,14 @@ main {
   position: absolute;
   bottom: -100px;
   z-index: 30;
+  min-height: 50px;
   cursor: pointer;
+}
+.settingButton .fa-cog {
+  color: #333;
+}
+.settingButton .fa-cog.colorChange {
+  color: #fff;
 }
 
 .settingWindow {
@@ -35,7 +47,7 @@ main {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: #ccc;
+  background-color: #333;
   transition: 0.3;
   opacity: 0;
   visibility: hidden;
@@ -55,6 +67,7 @@ main {
 }
 .settingWindow.active p {
   font-size: 20px;
+  color: #fff;
   margin-bottom: 10px;
 }
 .settingWindow.active .playerNameInput {
@@ -70,15 +83,15 @@ main {
   border: 1px solid #28f;
 }
 .settingWindow.active .playerNameDecisionButton {
-  border: 1px solid #000;
-  padding: 10px;
   background-color: #28f;
   color: #fff;
+  border: 1px solid #000;
   border-radius: 3px;
-  opacity: 0.5;
+  padding: 10px;
+  transition: 0.3s;
 }
 .settingWindow.active .playerNameDecisionButton:hover {
-  opacity: 0.3;
+  opacity: 0.5;
 }
 .settingWindow.active .playerNameWindowMask {
   position: fixed;
@@ -139,29 +152,44 @@ main {
   background-color: #6bf;
 }
 
-section {
+.main {
+  /* モンスターの画像 */
+  /* アイテム */
+  /* コイン */
+}
+.main.active {
+  animation: flash 0.3s linear;
+}
+@keyframes flash {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+}
+.main section {
   background-color: #fff;
   padding: 20px;
 }
-section h2 {
+.main section h2 {
   font-weight: bold;
   font-size: 20px;
   text-align: center;
 }
-
-.enemy {
+.main .enemy {
   margin-bottom: 20px;
   text-align: center;
 }
-
-/* モンスターの画像 */
-#enemyImg {
+.main .enemyImg {
   width: 100px;
   height: 100px;
   background-size: cover;
 }
-
-#playerImg {
+.main .player {
+  position: relative;
+}
+.main .playerImg {
   width: 100px;
   height: 100px;
   background-size: cover;
@@ -169,66 +197,96 @@ section h2 {
   left: 50%;
   transform: translateX(-50%);
 }
-
-/* アイテム */
-.haveItem {
-  margin-top: 10px;
+.main .haveItem {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  text-align: center;
 }
-.haveItem .useItem {
-  border: 1px solid #333;
-  background-color: #28f;
+.main .haveItem .haveItemList {
+  margin-bottom: 20px;
+}
+.main .haveItem .haveItemList li {
+  margin-top: 5px;
+  gap: 5px;
+  cursor: pointer;
+  text-align: end;
+}
+.main .haveItem .haveItemList li .useItemButton {
   color: #fff;
+  background-color: green;
+  border: 1px solid #333;
   border-radius: 5px;
-  padding: 5px;
-  margin: 5px;
-  transition: 0.5s;
+  margin-left: 5px;
+  padding: 3px;
+  transition: 0.3s;
 }
-.haveItem .useItem:hover {
-  transform: scale(1.1);
+.main .haveItem .haveItemList li .useItemButton.inActive {
+  pointer-events: none;
+  opacity: 0.5;
 }
-
-/* コイン */
-.coin {
+.main .haveItem .haveItemList li .useItemButton:hover {
+  opacity: 0.5;
+}
+.main .magic {
+  display: flex;
+  gap: 10px;
+  position: absolute;
+  top: 20%;
+  right: 0;
+  cursor: pointer;
+}
+.main .magic img {
+  width: 50px;
+  height: auto;
+}
+.main .magic img.inActive {
+  opacity: 0.2;
+  pointer-events: none;
+}
+.main .coin {
   text-align: right;
   font-size: 20px;
+  margin-top: 20px;
 }
-
-.hpGauge {
+.main .hpGauge {
   border: 1px solid #777;
   margin-top: 10px;
 }
-
-.hpGaugeValue {
-  height: 15px;
+.main .hpGaugeValue {
   background-color: #6bf;
+  height: 15px;
   transition: 0.3s;
   width: 100%;
 }
-
-.hp {
+.main .hp {
   display: flex;
   justify-content: center;
   margin-top: 10px;
 }
-.hp > div:first-of-type::after {
-  content: "/ ";
-  margin: 0 5px;
+.main .mpGauge {
+  border: 1px solid #777;
+  margin-top: 10px;
 }
-
-.KilledNumbers {
+.main .mpGaugeValue {
+  background-color: purple;
+  height: 15px;
+  transition: 0.3s;
+  width: 100%;
+}
+.main .mp {
+  display: flex;
+  justify-content: center;
+  margin-top: 10px;
+}
+.main .KilledNumbers {
   display: flex;
   justify-content: flex-end;
 }
-.KilledNumbers > div:first-of-type::after {
-  content: "/";
-  margin: 0 5px;
-}
-
-#nowKilledNumber {
+.main #nowKilledNumber {
   margin-left: 5px;
 }
-
-.logs {
+.main .logs {
   border: 1px solid #777;
   border-radius: 5px;
   padding: 10px 15px;
@@ -239,8 +297,7 @@ section h2 {
   margin-top: 30px;
   box-shadow: 0 0 3px 0 #777 inset;
 }
-
-.attack {
+.main .attack {
   margin: 50px auto 0;
   width: 200px;
   height: 40px;
@@ -256,11 +313,10 @@ section h2 {
   cursor: pointer;
   transition: 0.3s;
 }
-.attack:hover {
+.main .attack:hover {
   transform: scale(1.2);
 }
-
-.shopIn {
+.main .shopIn {
   margin: 50px auto 0;
   width: 200px;
   height: 40px;
@@ -278,7 +334,10 @@ section h2 {
   opacity: 0.3;
   transition: 0.5s;
 }
-.shopIn.active {
+.main .shopIn:hover {
+  opacity: 0.5;
+}
+.main .shopIn.active {
   background-color: darkseagreen;
   cursor: pointer;
   visibility: visible;
@@ -288,8 +347,10 @@ section h2 {
   position: relative;
   z-index: 2;
 }
-
-.attack.deActive {
+.main .shopIn.active:hover {
+  transform: scale(1.5);
+}
+.main .attack.deActive {
   pointer-events: none;
   opacity: 0.5;
 }
@@ -362,6 +423,7 @@ section h2 {
   transition: 1s;
   opacity: 0;
   visibility: hidden;
+  padding: 20px;
 }
 .itemWindow.show {
   opacity: 1;
@@ -370,40 +432,57 @@ section h2 {
 }
 .itemWindow .playerCoinDisplay {
   position: absolute;
-  top: 10%;
+  top: 5%;
   left: 50%;
   transform: translateX(-50%);
   font-size: 30px;
 }
 .itemWindow .itemType {
+  width: 90%;
   position: fixed;
-  top: 50%;
+  top: 30%;
   left: 50%;
   transform: translate(-50%, -50%);
   transition: 2s;
   opacity: 0;
   visibility: hidden;
   text-align: center;
+  margin-right: 20px;
+}
+.itemWindow .itemType li {
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+  gap: 20px;
+  border: 1px solid #000;
+  padding: 5px;
+}
+.itemWindow .itemType li img {
+  height: 100px;
+}
+.itemWindow .itemType li .itemName {
+  width: 22.5%;
 }
 .itemWindow .itemType.show {
   opacity: 1;
   visibility: visible;
   z-index: 3;
 }
+.itemWindow .itemType.show .shopItemImage {
+  margin: 0 20px;
+}
+.itemWindow .itemType.show .shopItemImage .eachShopItemImage {
+  width: calc((100vw - 20px) / 3);
+  height: auto;
+}
+.itemWindow .itemType.show .shopItemImage .eachShopItemImage img {
+  width: 100%;
+  height: auto;
+}
 .itemWindow .itemType.show .numberOfItem {
   cursor: pointer;
 }
-.itemWindow th {
-  width: 300px;
-  height: 300px;
-  border: 1px solid #333;
-}
-.itemWindow tr,
-.itemWindow td {
-  border: 1px solid #333;
-  padding: 10px;
-}
-.itemWindow .itemBuy span {
+.itemWindow .itemBuyButton {
   display: block;
   color: #fff;
   background-color: #28f;
@@ -411,14 +490,9 @@ section h2 {
   border-radius: 5px;
   padding: 10px;
   cursor: pointer;
-  opacity: 0.3;
-  pointer-events: none;
+  cursor: pointer;
 }
-.itemWindow .itemBuy span.active {
-  opacity: 1;
-  pointer-events: auto;
-}
-.itemWindow .itemBuy span:hover {
+.itemWindow .itemBuyButton:hover {
   opacity: 0.7;
 }
 .itemWindow .itemBuyWindowMask {
@@ -525,6 +599,37 @@ section h2 {
   color: #fff;
   background-color: #6bf;
 }
+.itemWindow .sellItem {
+  position: absolute;
+  bottom: 10%;
+  right: 25%;
+}
+.itemWindow .sellItem .sellItemList li {
+  margin-top: 10px;
+}
+.itemWindow .sellItem .sellItemList li:first-of-type button.inActive {
+  pointer-events: none;
+  opacity: 0.5;
+}
+.itemWindow .sellItem .sellItemList li:nth-of-type(3) button.inActive {
+  pointer-events: none;
+  opacity: 0.5;
+}
+.itemWindow .sellItem .sellItemList li button {
+  border: 2px solid #28f;
+  background-color: #fff;
+  color: #28f;
+  border-radius: 5px;
+  padding: 2px;
+  margin: 5px;
+  transition: 0.5s;
+  display: flex;
+  justify-content: center;
+  justify-items: center;
+}
+.itemWindow .sellItem .sellItemList li button:hover {
+  transform: scale(1.05);
+}
 .itemWindow .shopOut {
   margin: 50px auto 0;
   width: 200px;
@@ -545,6 +650,9 @@ section h2 {
   border: 1px solid #ccc;
   cursor: pointer;
   transition: 0.5s;
+}
+.itemWindow .shopOut:hover {
+  opacity: 0.5;
 }
 .itemWindow .shopOut:hover {
   transform: translateX(-50%) scale(1.2);

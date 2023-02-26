@@ -48,8 +48,11 @@
   outline: none;
   font-size: 20px;
   border-radius: 5px;
-}
 
+  &:hover {
+    opacity: 0.5;
+  }
+}
 
 // マスク
 @mixin blackTranslucentMask() {
@@ -60,3 +63,23 @@
   height: 100%;
   background-color: rgba(0, 0, 0, 0.6);
 }
+
+// ゲージ　============================================================
+@mixin gaugeBorder() {
+  border: 1px solid #777;
+  margin-top: 10px;
+}
+
+@mixin gaugeValue($background_color) {
+  background-color: $background_color;
+  height: 15px;
+  transition: 0.3s;
+  width: 100%;
+}
+
+@mixin hpAndMpDisplayStyle() {
+  display: flex;
+  justify-content: center;
+  margin-top: 10px;
+}
+

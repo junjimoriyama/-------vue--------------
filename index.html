@@ -5,181 +5,219 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ゲーム制作</title>
+  <title>戦闘ゲーム</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/destyle.css@1.0.15/destyle.css" />
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <script>
+    // アドビフォント
+    (function (d) {
+      var config = {
+        kitId: 'qwv5fgw',
+        scriptTimeout: 3000,
+        async: true
+      },
+        h = d.documentElement, t = setTimeout(function () { h.className = h.className.replace(/\bwf-loading\b/g, "") + " wf-inactive"; }, config.scriptTimeout), tk = d.createElement("script"), f = false, s = d.getElementsByTagName("script")[0], a; h.className += " wf-loading"; tk.src = 'https://use.typekit.net/' + config.kitId + '.js'; tk.async = true; tk.onload = tk.onreadystatechange = function () { a = this.readyState; if (f || a && a != "complete" && a != "loaded") return; f = true; clearTimeout(t); try { Typekit.load(config) } catch (e) { } }; s.parentNode.insertBefore(tk, s)
+    })(document);
+  </script>
+  <script src="https://unpkg.com/vue@next"></script>
   <script src="script.js" defer></script>
 </head>
 
 <body>
-  <main>
-    <!-- セッティング -->
-    <div id="settingButton" class="settingButton">
-      <i class="fa fa-cog"></i>
-    </div>
+  <div id="app">
 
-    <div id="settingWindow" class="settingWindow">
-      <div id="playerCurrentName" class="playerCurrentName">
+    <main class="main">
+
+      <!-- セッティング -->
+      <div id="settingButton" class="settingButton" @click="toSet">
+        <i class="fa fa-cog" :class="{colorChange: isColorChange}"></i>
       </div>
+      <!-- class="settingWindow" -->
+      <div class="settingWindow" :class="{active: isNameActive}">
+        <div class="playerCurrentName">
+        </div>
 
-      <!-- 名前の入力 -->
-      <p>変更する名前を入力してください。</p>
-      <input id="playerNameInput" class="playerNameInput" type="text" name="playerNameInput">
-      <button id="playerNameDecisionButton" class="playerNameDecisionButton">決定</button>
+        <!-- 名前の入力 -->
+        <p>変更する名前を入力してください。</p>
+        <input class="playerNameInput" v-model="playerData.name" type="text" name="playerNameInput">
+        <button class="playerNameDecisionButton" @click="playerNameDecision">決定</button>
 
-      <div id="playerNameWindowMask" class="playerNameWindowMask"></div>
-      <div id="playerNameModal" class="playerNameModal">
-        <p>名前を変更しました。</p>
-        <button id="playerNameConfiramationButton" class="playerNameConfiramationButton">確認した</button>
-      </div>
-    </div>
-
-    <!------------------------- 戦闘画面 ------------------------->
-    <!-- 敵の表示 -->
-    <section id="enemy" class="enemy">
-      <h2 id="enemyName"></h2>
-
-      <img id="enemyImg" class="enemyImg">
-
-      <div class="hpGauge">
-        <div class="hpGaugeValue" id="currentEnemyHpGaugeValue"></div>
-      </div>
-      <div class="hp">
-        <div id="currentEnemyHp"></div>
-        <div id="maxEnemyHp"></div>
-      </div>
-    </section>
-
-    <!-- プレイヤーの表示 -->
-    <section class="player">
-      <!-- 名前 -->
-      <h2 id="playerName"></h2>
-      <!-- 画像 -->
-      <img id="playerImg" class="playerImg">
-      <!-- 経験値 -->
-      <div id='exp' class='exp'></div>
-      <!-- レベル -->
-      <div id="level" class='level'></div>
-
-      <div id="playerAttack" class="playerAttack"></div>
-      <div id="playerDefence" class="playerDefence"></div>
-
-
-      <!-- アイテム -->
-      <div id="haveItem" class="haveItem">- アイテム -
-        <ul id="haveItemList"></ul>
-          <button id="useItem" class="useItem">アイテムを使う</button>
-      </div>
-
-      <!-- コイン -->
-      <div id="coin" class="coin">コイン</div>
-
-      <!-- HPゲージ -->
-      <div class="hpGauge">
-        <div class="hpGaugeValue" id="currentPlayerHpGaugeValue"></div>
-      </div>
-
-      <div class="hp">
-        <div id="currentplayerHp"></div>
-        <div id="maxplayerHp"></div>
-      </div>
-
-      <!-- 討伐数 -->
-      <div class="playerStatus">
-        <div class="KilledNumbers">
-          討伐数 : <div id="nowKilledNumber"></div>
-          <div id="targetKilledNumber"></div>
+        <div class="playerNameWindowMask"></div>
+        <div class="playerNameModal">
+          <p>名前を変更しました。</p>
+          <button class="playerNameConfiramationButton">確認した</button>
         </div>
       </div>
 
-      <!-- 攻撃のログ -->
-      <ul id="logs" class="logs"></ul>
-      <button id="attack" class="attack">攻撃する</button>
+      <!------------------------- 戦闘画面 ------------------------->
 
-      <button id="shopIn" class="shopIn">ショップに入る</button>
-    </section>
-  </main>
+      <!-- 敵の表示 -->
+      <section id="enemy" class="enemy">
+        <h2 id="enemyName" :value="enemyData.name">
+          {{enemyData.name}}
+        </h2>
 
-  <div id="mask" class="mask"></div>
-  <div id="modal" class="modal">
-    <h2 id="modalTitle" class="modalTitle"></h2>
-    <a id="modalNextButton" class="modalNextButton">次へすすむ</a>
-  </div>
+        <img class="enemyImg" :src="enemyData.img">
 
+        <div class="hpGauge">
+          <div class="hpGaugeValue" id="currentEnemyHpGaugeValue" :style="hpGaugeStyle('enemyData')">
+          </div>
+        </div>
+        <div class="hp">
+          {{enemyData.hp}} / {{enemyData.maxHp}}
+        </div>
+      </section>
 
-  <!------------------------- アイテムショップ画面 ------------------------->
-  <div id="itemWindow" class="itemWindow">
+      <!-- プレイヤーの表示 -->
+      <section class="player">
+        <p>キャラ選択</p>
+        
+        <select id="playerSelect" v-model="currentPlayerIndex">
+          <option v-for="(player, playerIndex) in playersData" :value="playerIndex">{{player.name}}</option>
+        </select>
+        <!-- 名前 -->
+        <h2 id="playerName">
+          {{playersData[currentPlayerIndex].name}}
+        </h2>
+        <!-- 画像 -->
+        <img class="playerImg" :src="playersData[currentPlayerIndex].img">
+        <!-- 攻撃力 -->
+        <div class="playerAttackPower">
+          攻撃力 : {{playersData[currentPlayerIndex].attack}}
+        </div>
+        <!-- 防御力 -->
+        <div class="playerDeffencePower">
+          防御力 : {{playersData[currentPlayerIndex].deffence}}
+        </div>
+        <!-- 経験値 -->
+        <div class='exp'>
+          経験値 : {{playersData[currentPlayerIndex].exp}}
+        </div>
+        <!-- レベル -->
+        <div class='level'>
+          レベル : {{playersData[currentPlayerIndex].level}}
+        </div>
 
-    <div id="playerCoinDisplay" class="playerCoinDisplay"></div>
+        <!-- アイテム -->
+        <div class="haveItem">- アイテム一覧 -
+          <ul id="haveItemList" class="haveItemList">
+            <li class="haveItemEachList" v-for="(useItem,index) in items" key="useItem">
+              <span>{{useItem.name}}:</span>
+              <span id="useItemNumber">{{useItem.number}}個</span>
+              <button id="useItemButton" class="useItemButton" :class="{inActive: useItem.number === 0}"
+                @click="useTheItem(index)">アイテムを使う
+              </button>
+            </li>
+          </ul>
+        </div>
 
-    <table id="shopItemTable" class="itemType">
-      <tr id="shopItemImage">
-        <!-- <th><img id='itemImgA' class='itemImgA'></th>
-        <th><img id='itemImgB' class='itemImgB'></th> -->
-      </tr>
-      <tr id="shopItemName">
-        <!-- <td id="itemNameA" class="itemNameA"></td>
-        <td id="itemNameB" class="itemNameB"></td> -->
-      </tr>
-      <tr id="shopItemPrice">
-        <!-- <td id="itemUnitPriceA" class="itemUnitPriceA"></td>
-        <td id="itemUnitPriceB" class="itemUnitPriceB"></td> -->
-      </tr>
-      <tr id="shopItemNumber">
-        <!-- <td>
-          <label for="numberOfItemA">
-            購入数 :
-            <select id="numberOfItemA" class="numberOfItem"  name="numberOfItem">
-              <option value="1">1</option>
-              <option value="2">2</option>
-              <option value="3">3</option>
-              <option value="4">4</option>
-              <option value="5">5</option>
-            </select>
-          </label>
-        </td>
+        <!-- 魔法 -->
+        <div class="magic">
+          <img v-for="(magic, magicIndex) in magics" :src="magic.img" alt="魔法" 
+          :class="{inActive: magic.mp > playerData.mp }"
+          @click="useMagic(magicIndex)"
+          
+          >
+        </div>
 
-        <td>
-          <label>
-            購入数 :
-            <select id="numberOfItemB" class="numberOfItem"  name="numberOfItem">
-              <option value="1">1</option>
-              <option value="2">2</option>
-              <option value="3">3</option>
-              <option value="4">4</option>
-              <option value="5">5</option>
-            </select>
-          </label>
-        </td> -->
+        <!-- コイン -->
+        <div id="coin" class="coin">
+          コイン : {{playerData.coin}}
+        </div>
 
-      <tr id="shopItemTotalBuyCoin">
-        <!-- <td id="totalBuyCoinA" class="totalBuyCoinA">合計コイン : 10 </td>
-        <td id="totalBuyCoinB" class="totalBuyCoinB">合計コイン : 20</td> -->
-      </tr>
+        <!-- HPゲージ -->
+        <div class="hpGauge">
+          <div class="hpGaugeValue" :style="hpGaugeStyle('playersData')">
+          </div>
+        </div>
 
-      <tr id="shopItemBuy">
-        <!-- <td id='itemBuyA' class='itemBuy'><span>購入</span></td> -->
-        <!-- <td id='itemBuyB' class='itemBuy'><span>購入</span></td> -->
-      </tr>
-    </table>
+        <!-- HPの表示 -->
+        <div class="hp">
+          HP: {{playersData[currentPlayerIndex].hp}} / {{playersData[currentPlayerIndex].maxHp}}
+        </div>
 
-    <div id="itemBuyWindowMask" class="itemBuyWindowMask"></div>
-    <div id="itemBuyModal" class="itemBuyModal">
-      <p>アイテムを購入した</p>
-      <div id="coinBalance" class="coinBalance"></div>
-      <button class="itemBuyConfiramationButton">確認した</button>
+        <!-- MPゲージ -->
+        <div class="mpGauge">
+          <div class="mpGaugeValue" :style="mpGaugeStyle()">
+          </div>
+        </div>
+
+        <div class="mp">
+          MP: {{playersData[currentPlayerIndex].mp}} / {{playersData[currentPlayerIndex].maxMp}}
+        </div>
+
+        <!-- 討伐数 -->
+        <div class="playerStatus">
+          <div class="KilledNumbers">
+            討伐数 : <div id="nowKilledNumber">
+              {{nowKilledNumber}}/{{goalKilledNumber}}
+            </div>
+            <div id="targetKilledNumber"></div>
+          </div>
+        </div>
+
+        <!-- 攻撃のログ -->
+        <ul id="logs" class="logs">
+          <li v-for:="log in logs" :key="log" v-html="log"></li>
+        </ul>
+        <button id="attack" class="attack" :class="{deActive: deActive}" @click="makeAnAttack">攻撃する</button>
+
+        <button class="shopIn" :class="{active: isShopIn}" @click="shopIn">ショップに入る</button>
+      </section>
+    </main>
+
+    <!-- モーダル -->
+    <div id="mask" class="mask" :class="{active: isModalActive}"></div>
+    <div id="modal" class="modal" :class="{active: isModalActive}">
+      <h2 id="modalTitle" class="modalTitle"></h2>
+      <a id="modalNextButton" class="modalNextButton" :class="{hidden: isNextButtonHidden}"
+        @click="clickModalNextButton">次へすすむ</a>
     </div>
 
-    <div id="itemNotBuyModal" class="itemNotBuyModal">
-      <p>お金が足りず<br>アイテムを購入できませんでした。</p>
-      <button class="itemBuyConfiramationButton">確認した</button>
+    <!------------------------- アイテムショップ画面 ------------------------->
+    <div class="itemWindow" :class="{show: isItemWindow}">
+
+      <div class="playerCoinDisplay">
+        現在のコイン:{{playerData.coin}}
+      </div>
+
+      <ul class="itemType" :class="{show: isItemWindow}">
+        <li v-for="(item, itemIndex) in items" :key="item.name"
+          :style="{opacity: Math.floor(playerData.coin / item.price) === 0 ? '.5' : '1'}">
+          <img :src="item.image" :alt="`${item.name}の画像`">
+          <p class="itemName">{{item.name}}</p>
+          <select name="buyNum" v-model="item.buyNum" @change="itemNumberChange(item, itemIndex)">
+            <!-- 買える個数はコインの数で決める -->
+            <option v-for="n in Math.floor(playerData.coin / item.price)" :value="n" :key="n">{{n}}</option>
+          </select>
+          <p id="itemPrice" class="itemPrice">売り値 : {{item.price * item.buyNum }}</p>
+          <div class="itemBuyButton" @click="buyItem(itemIndex)">購入</div>
+        </li>
+      </ul>
+
+      <!-- アイテム -->
+      <div id="itemBuyWindowMask" class="itemBuyWindowMask"></div>
+      <div id="itemBuyModal" class="itemBuyModal">
+        <p>アイテムを購入した</p>
+        <div id="coinBalance" class="coinBalance"></div>
+        <button class="itemBuyConfiramationButton">確認した</button>
+      </div>
+
+      <div id="itemNotBuyModal" class="itemNotBuyModal">
+        <p>お金が足りず<br>アイテムを購入できませんでした。</p>
+        <button class="itemBuyConfiramationButton">確認した</button>
+      </div>
+
+      <div id="sellItem" class="sellItem">
+        <ul id="sellItemList" class="sellItemList"></ul>
+
+      </div>
+
+      <div id='shopOut' class='shopOut' @click="shopOut">ショップを出る</div>
+
+
     </div>
-
-
-    <div id='shopOut' class='shopOut'>ショップを出る</div>
-
-
   </div>
 </body>
 
