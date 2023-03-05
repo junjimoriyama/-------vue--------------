@@ -2,6 +2,7 @@ const app = {
   //? データ ==========================================================
   data() {
     return {
+      // toggle: false,
       // TODO 共通のデータ　=======================================
       // 攻撃ボタン 押せる押せない
       deActive: false,
@@ -10,7 +11,11 @@ const app = {
       // 負けた時のフラグ
       defeat: false,
       // TODO 敵のデータ　=======================================
-      // 敵の空データ
+
+      encountEnemies: [],
+
+      encountEnemiesNum: 0,
+
       enemyData: [
         {
           name: "",
@@ -21,6 +26,8 @@ const app = {
           img: "",
           exp: "",
           weakness: "",
+          isDefeat: "",
+          isVisible: "",
         }
       ],
       // 名前とHPを定義(複数用意)
@@ -28,32 +35,43 @@ const app = {
         {
           name: "スライム",
           hp: 50,
+          maxHp: 50,
           attack: 4,
           deffence: 1,
           coin: 0,
           img: "image/slime.jpg",
           exp: 10,
-          weakness: 'ファイア'
+          weakness: 'ファイア',
+          isDefeat: true,
+          isVisible: true,
+
         },
         {
           name: "フェアリー",
           hp: 60,
+          maxHp: 60,
           attack: 5,
           deffence: 1,
           coin: 0,
           img: "image/fairy.jpg",
           exp: 20,
-          weakness: 'ブリザード'
+          weakness: 'ブリザード',
+          isDefeat: true,
+          isVisible: true,
         },
         {
           name: "ガーゴイル",
           hp: 80,
-          attack: 6,
+          maxHp: 80,
+          attack: 10,
           deffence: 2,
           coin: 0,
           img: "image/gargoyle.png",
           exp: 30,
-          weakness: 'サンダー'
+          weakness: 'サンダー',
+          isDefeat: true,
+          isVisible: true,
+
         }
       ],
       // 敵の攻撃によるプレイヤーのダメージ
@@ -62,6 +80,8 @@ const app = {
       // TODO プレイヤーのデータ　=======================================
 
       currentPlayerIndex: 0,
+
+      selectAttackEnemiesIndex: 0,
 
       playerData: {
         coin: 10,
@@ -75,7 +95,7 @@ const app = {
           mp: 20,
           maxMp: 20,
           attack: 10,
-          deffence: 3,
+          deffence: 10,
           exp: 0,
           level: 1,
           img: "image/braver.png",
@@ -87,7 +107,7 @@ const app = {
           mp: 30,
           maxMp: 30,
           attack: 10,
-          deffence: 2,
+          deffence: 200,
           exp: 0,
           level: 1,
           img: "image/wizard.jpg",
@@ -163,26 +183,27 @@ const app = {
         },
       ],
       // TODO 魔法　=======================================
-      magics: [
-        {
+      magics: {
+        
+        fire: {
           name: "ファイア",
           attack: 1,
           mp: 5,
           img: 'image/magic/fire.png',
         },
-        {
+        blizzard: {
           name: "ブリザード",
           attack: 2,
           mp: 6,
           img: 'image/magic/blizzard.jpg',
         },
-        {
+        thunder: {
           name: "サンダー",
           attack: 3,
           mp: 7,
           img: 'image/magic/thunder.png',
         },
-      ]
+      }
     }
   },
 
@@ -212,62 +233,64 @@ const app = {
     useMagicLog(player, magics, enemy, attack) {
       this.logs.unshift(`${player}は${magics}を使用${enemy}に${attack}のダメージ`);
     },
-
-    useMagic(magicIndex) {
+    useMagic(magic) {
+      console.log(magic.mp)
       // もしプレイヤーのMPが魔法の消費MPより大きければ
+      if (this.playersData[this.currentPlayerIndex].mp >= magic.mp) {
         // MP消費
-        this.playersData[this.currentPlayerIndex].mp -= this.magics[magicIndex].mp
-
+        this.playersData[this.currentPlayerIndex].mp -= magic.mp
         // 弱点属性の場合
-        if (this.magics[magicIndex].name === this.enemyData.weakness) {
-          this.enemyData.hp -= this.magics[magicIndex].attack * 2
+        if (magic.name === this.enemyData.weakness) {
+          this.encountEnemies[this.selectAttackEnemiesIndex].hp -= magic.attack * 2
           // ログ
-          this.useMagicLog(this.playerName, this.magics[magicIndex].name, this.enemyName, this.magics[magicIndex].attack * 2);
+          this.useMagicLog(this.playerName, magic.name, this.enemyName, magic.attack * 2);
           // 弱点属性でない場合
         } else {
-          this.enemyData.hp -= this.magics[magicIndex].attack
-          this.useMagicLog(this.playerName, this.magics[magicIndex].name, this.enemyName, this.magics[magicIndex].attack);
+          this.encountEnemies[this.selectAttackEnemiesIndex].hp -= magic.attack
+          this.useMagicLog(this.playerName, magic.name, this.enemyName, magic.attack);
         }
         this.afterPlayerActionProcess()
+      }
+    },
+
+    changeAttackEnemies(e) {
+      // this.encountEnemies[this.selectAttackEnemiesIndex].isDefeat = false
     },
 
     //TODO ゲージについて================================================================
 
-    //HPゲージ
-    // hpGaugeStyle(dataKind) {
-    //   let gaugeColor
-    //   let currentGaugePercentage = this.playersData[this.currentPlayerIndex].hp / this.playersData[this.currentPlayerIndex].maxHp
-    //   if (.9 < currentGaugePercentage) {
-    //     gaugeColor = "#6bf";
-    //   } else if (.2 < currentGaugePercentage) {
-    //     gaugeColor = "yellow";
-    //   } else {
-    //     gaugeColor = "red";
-    //   }
-    //   // オブジェクトで返す（スタイルやクラスはオブジェクトが基本）
-    //   return {
-    //     // []には変数を入れられる
-    //     width: `${this.playersData[this.currentPlayerIndex].hp / this.playersData[this.currentPlayerIndex].maxHp * 100}%`,
-    //     backgroundColor: gaugeColor
-    //   }
-    hpGaugeStyle(dataKind) {
-      let gaugeColor
-      let currentGaugePercentage = this[dataKind].hp / this[dataKind].maxHp
-      // let currentGaugePercentage = this[dataKind][this.currentPlayerIndex].hp / this[dataKind][this.currentPlayerIndex].maxHp
-      if (.9 < currentGaugePercentage) {
+    //HPゲージ(引数enemyに敵の情報が入っている)
+    enemyHpGaugeStyle(enemy) {
+      // 
+      currentEnemyGaugePercentage = enemy.hp / enemy.maxHp
+      if (.9 < currentEnemyGaugePercentage) {
         gaugeColor = "#6bf";
-      } else if (.2 < currentGaugePercentage) {
+      } else if (.2 < currentEnemyGaugePercentage) {
         gaugeColor = "yellow";
       } else {
         gaugeColor = "red";
       }
-      // オブジェクトで返す（スタイルやクラスはオブジェクトが基本）
       return {
-        // []には変数を入れられる
-        width: `${this[dataKind].hp / this[dataKind].maxHp * 100}%`,
+        width: `${enemy.hp / enemy.maxHp * 100}%`,
         backgroundColor: gaugeColor
       }
     },
+
+    playerHpGaugeStyle() {
+      currentPlayerGaugePercentage = this.playersData[this.currentPlayerIndex].hp / this.playersData[this.currentPlayerIndex].maxHp
+      if (.9 < currentPlayerGaugePercentage) {
+        gaugeColor = "#6bf";
+      } else if (.2 < currentPlayerGaugePercentage) {
+        gaugeColor = "yellow";
+      } else {
+        gaugeColor = "red";
+      }
+      return {
+        width: `${this.playersData[this.currentPlayerIndex].hp / this.playersData[this.currentPlayerIndex].maxHp * 100}%`,
+        backgroundColor: gaugeColor
+      }
+    },
+
     //MPゲージ
     mpGaugeStyle() {
       return {
@@ -275,11 +298,13 @@ const app = {
       }
     },
 
+    // 敵を選ぶ
+    
+
     // TODO 攻撃ボタンを押した時の処理　===============================================
     // 攻撃ボタン押した時の処理
     makeAnAttack() {
-      // 攻撃の効果
-
+      // 攻撃した時の画面のフラッシュ
       const main = document.querySelector('.main')
       main.classList.add('active')
       setTimeout(() => { main.classList.remove('active') }, 100)
@@ -288,7 +313,7 @@ const app = {
       // playerAttackSound.play()
 
       // プレイヤーから敵側への処理　=======================================
-      this.playerDamege = this.damageCalculation(this.playersData[this.currentPlayerIndex].attack, this.enemyData.deffence)
+      this.playerDamege = this.damageCalculation(this.playersData[this.currentPlayerIndex].attack, this.encountEnemies[this.selectAttackEnemiesIndex].deffence)
       // クリティカルヒットが出る確率
       if ((1 + Math.floor(Math.random() * 100)) < this.creticalHitRate) {
         // クリティカルヒットのフラグture
@@ -297,10 +322,10 @@ const app = {
         this.playerDamege *= 2
       }
       // 敵のHPからプレイヤーの攻撃力を引く
-      this.enemyData.hp -= this.playerDamege
+      this.encountEnemies[this.selectAttackEnemiesIndex].hp -= this.playerDamege
 
-      let playerLog
       // プレイヤーのログ =======================
+      let playerLog
       if (this.creticalHit) {
         playerLog = `クリティカルヒット!${this.playerName}の攻撃!
         ${this.enemyName}に${this.playerDamege}のダメージ`;
@@ -317,28 +342,39 @@ const app = {
     afterPlayerActionProcess() {
 
       // TODO もし敵のHPが0になったら ========================================
-      if (this.enemyData.hp <= 0) {
-        // ゲーム終わりのフラグをtrue
+      // 勝ったとき
+      if (this.encountEnemies[this.selectAttackEnemiesIndex].hp <= 0) {
+        // 敵のHPを0以下にしない処理
+        this.encountEnemies[this.selectAttackEnemiesIndex].hp = 0
+        // 敗北のフラグ
+        this.encountEnemies[this.selectAttackEnemiesIndex].isDefeat = false
+        // 残った敵の配列をnewEncountEnemiesへ返す
+        // const newEncountEnemies = this.encountEnemies.filter((remainingEnemy) => {
+        //   return remainingEnemy.isDefeat === true
+        // })
+        // // 初めの敵の配列を残っている敵の配列に書き替える
+        // this.encountEnemies = newEncountEnemies 
+      }
+      if(this.encountEnemies.length === 0) {
         this.victory = true
       }
+
       // TODO もしプレイヤーが勝ったら ========================================
       if (this.victory) {
         // 討伐数を増やす
         this.nowKilledNumber++
         // コインの追加
-        this.playerData.coin += this.enemyData.coin
+        this.playerData.coin += this.encountEnemies[this.selectAttackEnemiesIndex].coin
         // 経験値の追加
-        this.playersData[this.currentPlayerIndex].exp += this.enemyData.exp
+        this.playersData[this.currentPlayerIndex].exp += this.encountEnemies[this.selectAttackEnemiesIndex].exp
         // レベルの追加
         this.playersData[this.currentPlayerIndex].level = Math.floor(this.playersData[this.currentPlayerIndex].exp / this.levelUpExp) + 1
 
         //! 攻撃力アップ ==================================
         this.playersData[this.currentPlayerIndex].attack = this.playersData[this.currentPlayerIndex].attack + (this.playersData[this.currentPlayerIndex].level * 2) - 2
 
-        // 敵のHPを0以下にしない処理
-        this.enemyData.hp = 0
         // モーダルの表示
-        this.showModal(`${this.enemyData.name}を倒した`)
+        this.showModal(`${this.encountEnemies[this.selectAttackEnemiesIndex].name}を倒した`)
 
         // TODO もし目標討伐数に達したら========================================
         if (this.nowKilledNumber === this.goalKilledNumber) {
@@ -346,22 +382,22 @@ const app = {
         }
       }
 
-      // 敵側からプレイヤーへの処理　=======================================
+      //TODO 敵側からプレイヤーへの処理　=======================================
       // もし勝ちのフラグがfalseだった場合
       if (!this.victory) {
-        // 敵の攻撃力計算
-        this.enemyDamege = this.damageCalculation(this.enemyData.attack, this.playersData[this.currentPlayerIndex].deffence)
-        // プレイヤーのHPから敵の攻撃力を引く
-        this.playersData[this.currentPlayerIndex].hp -= this.enemyDamege
-        
-
-        // 敵のログ =======================
-        const enemyLog = `${this.enemyName}の攻撃!${this.playerName}${this.enemyDamege}のダメージ`;
-        // ログに表示
-        this.logs.unshift(enemyLog)
+        // 敵の数分攻撃の処理をする
+        this.encountEnemies.forEach((el, index) => {
+          // 敵の攻撃力計算(this.encountEnemies[index] = 表示されている敵１体)
+          this.enemyDamege = this.damageCalculation(this.encountEnemies[index].attack, this.playersData[this.currentPlayerIndex].deffence)
+          // プレイヤーのHPから敵の攻撃力を引く
+          this.playersData[this.currentPlayerIndex].hp -= this.enemyDamege
+          // 敵のログ =======================
+          const enemyLog = `<span style="color:red">${this.encountEnemies[index].name}</span>の攻撃!${this.playerName}${this.enemyDamege}のダメージ`;
+          // ログに表示
+          this.logs.unshift(enemyLog)
+        })
 
         // TODO もしプレイヤーが負けたら ========================================
-
         // もしプレイヤーのHPが0になったら
         if (this.playersData[this.currentPlayerIndex].hp <= 0) {
           // ゲーム終わりのフラグをtrue
@@ -400,12 +436,12 @@ const app = {
     // TODO 次に進むボタン押した処理 ========================================
     clickModalNextButton() {
       // 敵のHPを元に戻す
-      this.enemyData.hp = this.enemyData.maxHp
+      this.encountEnemies[this.selectAttackEnemiesIndex].hp = this.encountEnemies[this.selectAttackEnemiesIndex].maxHp
       // 敵が選ばれる
       let randomEnemy = Math.floor(Math.random() * this.enemiesData.length)
       this.enemyData = this.enemiesData[randomEnemy]
       // プレイヤーと敵のHPを元に戻す
-      this.enemyData.maxHp = this.deepCopy(this.enemyData.hp)
+      this.encountEnemies[this.selectAttackEnemiesIndex].hp = this.encountEnemies[this.selectAttackEnemiesIndex].maxHp
       // ログを空にする
       this.logs = []
 
@@ -424,26 +460,26 @@ const app = {
         // アイテムが回復系か攻撃系かかの判定
         if (this.items[index].itemsToRecover === true) {
           // HPが最大値ではない場合
-          if (this.playersDate.hp !== this.playersDate.maxHp) {
+          if (this.playersData[this.currentPlayerIndex].hp !== this.playersData[this.currentPlayerIndex].maxHp) {
             // 回復アイテム効果音
             // const RecoverySound = new Audio('sound/recovery.mp3')
             // RecoverySound.play()
             // 現在のHPが最大HPを下回っているかの判定
-            if (this.playersDate.hp < this.playersDate.maxHp) {
+            if (this.playersData[this.currentPlayerIndex].hp < this.playersData[this.currentPlayerIndex].maxHp) {
 
               // 現在のHPと回復力を足したHPが最大HPより小さいか判定
-              if (this.playersDate.maxHp > (this.playersDate.hp + this.items[index].resilience)) {
+              if (this.playersData[this.currentPlayerIndex].maxHp > (this.playersData[this.currentPlayerIndex].hp + this.items[index].resilience)) {
                 // 回復のログ
                 this.logs.unshift(`${this.playerName}${this.items[index].name}を使用${this.items[index].resilience}の回復`)
                 // プレイヤーのHPに回復力を足す
-                this.playersDate.hp += this.items[index].resilience
+                this.playersData[this.currentPlayerIndex].hp += this.items[index].resilience
 
                 // 現在のHPと回復力を足したHPが最大HPより大きい場合
               } else {
                 // 回復のログ
-                this.logs.unshift(`${this.playerName}${this.items[index].name}を使用${this.playersDate.maxHp - this.playersDate.hp}の回復`)
+                this.logs.unshift(`${this.playerName}${this.items[index].name}を使用${this.playersData[this.currentPlayerIndex].maxHp - this.playersData[this.currentPlayerIndex].hp}の回復`)
                 // プレイヤーのHPに回復力 = 最大HP - 現在のHP
-                this.playersDate.hp = this.playersDate.maxHp
+                this.playersData[this.currentPlayerIndex].hp = this.playersData[this.currentPlayerIndex].maxHp
               }
               // アイテムを減らす
               this.items[index].number -= 1
@@ -462,18 +498,18 @@ const app = {
           this.items[index].number -= 1
 
           // 敵のHPがアイテムの攻撃力より大きければ
-          if (this.enemyData.hp > this.items[index].attack) {
+          if (this.encountEnemies[this.selectAttackEnemiesIndex].hp > this.items[index].attack) {
             // 攻撃のログ
-            this.logs.unshift(`${this.playerName}は${this.items[index].name}を使用${this.enemyData.name}に${this.items[index].attack}のダメージ`);
+            this.logs.unshift(`${this.playerName}は${this.items[index].name}を使用${this.encountEnemies[this.selectAttackEnemiesIndex].name}に${this.items[index].attack}のダメージ`);
             // アイテムの攻撃力を引く
-            this.enemyData.hp -= this.items[index].attack
+            this.encountEnemies[this.selectAttackEnemiesIndex].hp -= this.items[index].attack
 
             // 敵のHPがアイテムの攻撃力より小さければ
           } else {
             // 攻撃のログ
-            this.logs.unshift(`${this.playerName}${this.items[index].name}を使用${this.enemyData.name}に${this.enemyData.hp}のダメージ`)
+            this.logs.unshift(`${this.playerName}${this.items[index].name}を使用${this.encountEnemies[this.selectAttackEnemiesIndex].name}に${this.encountEnemies[this.selectAttackEnemiesIndex].hp}のダメージ`)
             // 敵のHPを0にする
-            this.enemyData.hp = 0
+            this.encountEnemies[this.selectAttackEnemiesIndex].hp = 0
           }
           // ログ、勝敗の処理
           setTimeout(() => {
@@ -491,7 +527,7 @@ const app = {
     },
     //名前決定する
     playerNameDecision() {
-      alert(`名前を${this.playerData.name}に変更しました`)
+      alert(`名前を${this.playersData[this.currentPlayerIndex].name}に変更しました`)
       this.isNameActive = !this.isNameActive
       this.isColorChange = !this.isColorChange
     },
@@ -519,28 +555,36 @@ const app = {
     playerName() {
       return `<span style="color:blue">${this.playersData[this.currentPlayerIndex].name}</span>`
     },
+    // playerLogで使用
     enemyName() {
-      return `<span style="color:red">${this.enemyData.name}</span>`
+      return `<span style="color:red">${this.encountEnemies[this.selectAttackEnemiesIndex].name}</span>`
     },
   },
 
   //? mounted　==========================================================
   mounted() {
-    // ランダムに敵を生成
-    const randomEnemy = Math.floor(Math.random() * this.enemiesData.length)
-    this.enemyData = this.enemiesData[randomEnemy]
+    // 敵を生成 =======================================
+    // 敵の数1~3
+    const randomEnemiesNum = Math.floor(Math.random() * this.enemiesData.length + 1)
+
+    for (let i = 0; i < randomEnemiesNum; i++) {
+      // ランダムに敵を生成
+      this.encountEnemiesNum = Math.floor(Math.random() * this.enemiesData.length)
+      // 敵を決める
+      const enemyData = this.deepCopy(this.enemiesData[this.encountEnemiesNum])
+      this.encountEnemies.push(enemyData)
+    }
+    // ================================================
 
     for (const key in this.playersData[0]) {
       this.playersData[key] = this.playersData[0][key]
     }
-
-    // 敵の最大HP
-    this.enemyData.maxHp = this.deepCopy(this.enemyData.hp)
 
     // アイテムの個数の初期値を１にする
     this.items.forEach(item => {
       item.buyNum = 1
     })
   },
+
 }
 Vue.createApp(app).mount("#app")

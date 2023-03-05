@@ -32,7 +32,7 @@ a {
 main {
   margin: 50px auto;
   padding: 20px;
-  background-color: silver;
+  
   border-radius: 5px;
   max-width: 1000px;
   width: 100%;
@@ -174,15 +174,19 @@ main {
       opacity: 0;
     }
   }
+  .enemyWrap {
+    display: flex;
+    justify-content: space-evenly;
+    gap: 20px;
+    section {
+      
+      padding: 20px;
 
-  section {
-    background-color: #fff;
-    padding: 20px;
-
-    h2 {
-      font-weight: bold;
-      font-size: 20px;
-      text-align: center;
+      h2 {
+        font-weight: bold;
+        font-size: 20px;
+        text-align: center;
+      }
     }
   }
 
@@ -201,16 +205,26 @@ main {
 
   .player {
     position: relative;
+    padding: 20px;
+
+    .playerName {
+      text-align: center;
+    }
+
+    .playerImg {
+      width: 100px;
+      height: 100px;
+      background-size: cover;
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    .playerAttackPower {
+      margin-top: 20px;
+    }
   }
 
-  .playerImg {
-    width: 100px;
-    height: 100px;
-    background-size: cover;
-    position: relative;
-    left: 50%;
-    transform: translateX(-50%);
-  }
 
   /* アイテム */
   .haveItem {
@@ -281,7 +295,7 @@ main {
   .hpGauge {
     @include mixin.gaugeBorder();
   }
-  
+
   .hpGaugeValue {
     @include mixin.gaugeValue(#6bf);
   }
@@ -302,13 +316,12 @@ main {
     @include mixin.hpAndMpDisplayStyle();
   }
 
-
   .KilledNumbers {
     display: flex;
     justify-content: flex-end;
   }
 
-  #nowKilledNumber {
+  .nowKilledNumber {
     margin-left: 5px;
   }
 
@@ -394,7 +407,7 @@ main {
   left: 50%;
   transform: translate(-50%, -50%);
   padding: 30px;
-  background-color: #fff;
+  
   border-radius: 10px;
   min-width: 500px;
   transition: 0.3;
@@ -435,7 +448,7 @@ main {
 .itemWindow {
   width: 100%;
   height: 100vh;
-  background-color: #fff;
+  
   position: fixed;
   top: 50%;
   left: 50%;
@@ -634,7 +647,7 @@ main {
         margin-top: 10px;
         button {
           border: 2px solid #28f;
-          background-color: #fff;
+          
           color: #28f;
           border-radius: 5px;
           padding: 2px;

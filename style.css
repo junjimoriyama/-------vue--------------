@@ -19,7 +19,6 @@ a {
 main {
   margin: 50px auto;
   padding: 20px;
-  background-color: silver;
   border-radius: 5px;
   max-width: 1000px;
   width: 100%;
@@ -168,11 +167,15 @@ main {
     opacity: 0;
   }
 }
-.main section {
-  background-color: #fff;
+.main .enemyWrap {
+  display: flex;
+  justify-content: space-evenly;
+  gap: 20px;
+}
+.main .enemyWrap section {
   padding: 20px;
 }
-.main section h2 {
+.main .enemyWrap section h2 {
   font-weight: bold;
   font-size: 20px;
   text-align: center;
@@ -188,14 +191,21 @@ main {
 }
 .main .player {
   position: relative;
+  padding: 20px;
 }
-.main .playerImg {
+.main .player .playerName {
+  text-align: center;
+}
+.main .player .playerImg {
   width: 100px;
   height: 100px;
   background-size: cover;
-  position: relative;
+  position: absolute;
   left: 50%;
   transform: translateX(-50%);
+}
+.main .player .playerAttackPower {
+  margin-top: 20px;
 }
 .main .haveItem {
   position: absolute;
@@ -283,7 +293,7 @@ main {
   display: flex;
   justify-content: flex-end;
 }
-.main #nowKilledNumber {
+.main .nowKilledNumber {
   margin-left: 5px;
 }
 .main .logs {
@@ -377,7 +387,6 @@ main {
   left: 50%;
   transform: translate(-50%, -50%);
   padding: 30px;
-  background-color: #fff;
   border-radius: 10px;
   min-width: 500px;
   transition: 0.3;
@@ -415,7 +424,6 @@ main {
 .itemWindow {
   width: 100%;
   height: 100vh;
-  background-color: #fff;
   position: fixed;
   top: 50%;
   left: 50%;
@@ -617,7 +625,6 @@ main {
 }
 .itemWindow .sellItem .sellItemList li button {
   border: 2px solid #28f;
-  background-color: #fff;
   color: #28f;
   border-radius: 5px;
   padding: 2px;
