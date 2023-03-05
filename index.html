@@ -170,14 +170,21 @@
             <div class="targetKilledNumber"></div>
           </div>
         </div>
-        
+
+        <div class="selectEnemyMask" :class="{isActive: isSelectEnemyMask}"></div>
+        <div class="selectEnemy" :class="{isActive: isSelectEnemy}"v-for="(enemy, enemyIndex) in encountEnemies">
+          {{enemy.name}}
+        </div>
 
         <!-- 攻撃のログ -->
         <ul class="logs">
           <li v-for:="log in logs" :key="log" v-html="log"></li>
         </ul>
-        <button class="attack" :class="{deActive: deActive}" @click="makeAnAttack">攻撃する</button>
-
+        <button class="attack" :class="{deActive: deActive}" 
+        @click="selectEnemy"
+        >攻撃する</button>
+        <!-- @click="makeAnAttack" -->
+        
         <button class="shopIn" :class="{active: isShopIn}" @click="shopIn">ショップに入る</button>
       </section>
     </main>

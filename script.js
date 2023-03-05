@@ -10,6 +10,7 @@ const app = {
       victory: false,
       // 負けた時のフラグ
       defeat: false,
+      
       // TODO 敵のデータ　=======================================
 
       encountEnemies: [],
@@ -78,6 +79,9 @@ const app = {
       enemyDamege: "",
 
       // TODO プレイヤーのデータ　=======================================
+      isSelectEnemyMask: false,
+
+      isSelectEnemy: false,
 
       currentPlayerIndex: 0,
 
@@ -299,7 +303,10 @@ const app = {
     },
 
     // 敵を選ぶ
-    
+    selectEnemy() {
+      this.isSelectEnemyMask = true
+      this.isSelectEnemy = true
+    },
 
     // TODO 攻撃ボタンを押した時の処理　===============================================
     // 攻撃ボタン押した時の処理
